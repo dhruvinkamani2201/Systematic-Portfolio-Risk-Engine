@@ -22,3 +22,11 @@ Prints allocations<br/>
 ```bash
 python run.py all
 ```
+
+
+This performs: <br/>
+Stream multi-asset prices <br/>
+Build factors <br/>
+Estimate covariance <br/>
+Solve optimizer <br/>
+Display results <br/>
