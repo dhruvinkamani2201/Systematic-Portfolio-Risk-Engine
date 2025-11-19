@@ -7,7 +7,7 @@ from engine.factors import FactorModel
 from engine.covariance import CovarianceEstimator
 from engine.optimizer import PortfolioOptimizer
 from engine.attribution import RiskAttribution
-from engine.websocket_feed import stream_prices
+from engine.websocket_feed import stream_multi_asset
 from engine.plots import (
     plot_covariance_heatmap,
     plot_factor_loadings,
@@ -41,6 +41,10 @@ def run_pipeline(prices_csv, cfg):
     # Step 3: Optimizer
     mu = returns.mean()
     optimizer = PortfolioOptimizer(cov, mu)
+    
+    print("Prices shape:", prices.shape)
+    print("Returns shape:", returns.shape)
+    print("Mean returns:", mu)
 
     weights = optimizer.mean_variance(cfg["optimizer"]["risk_aversion"])
     print("\nOptimized Weights:\n", weights)
@@ -52,11 +56,10 @@ def run_pipeline(prices_csv, cfg):
 
 
 def run_feed(cfg):
-    asyncio.run(stream_prices(
-        cfg["feed"]["symbol"],
-        cfg["feed"]["duration"],
-        cfg["feed"]["out"]
-    ))
+    symbols = cfg["feed"]["symbols"]
+    duration = cfg["feed"]["duration"]
+    out = cfg["feed"]["out"]
+    asyncio.run(stream_multi_asset(symbols, duration, out))
 
 
 if __name__ == "__main__":
