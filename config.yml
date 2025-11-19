@@ -1,0 +1,10 @@
+feed:
+  symbol: BTCUSDT
+  duration: 30
+  out: data/prices.csv
+
+optimizer:
+  risk_aversion: 3.0
+
+factors:
+  n_pca: 3
