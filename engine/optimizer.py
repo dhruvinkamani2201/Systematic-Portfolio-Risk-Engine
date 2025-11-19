@@ -1,37 +1,34 @@
-import numpy as np
 import cvxpy as cp
+import numpy as np
 import pandas as pd
 
-
 class PortfolioOptimizer:
-    def __init__(self, cov: pd.DataFrame, mu: pd.Series):
-        self.cov = cov
-        self.mu = mu
+    def __init__(self, returns, cov, mu):
+        self.returns = returns
+
+        # Keep the asset names for output
+        self.asset_names = mu.index.tolist()
+
+        # Convert inputs to numpy for CVXPY compatibility
+        self.mu = np.asarray(mu, dtype=float)
+        self.cov = cov.values  # covariance matrix as ndarray
+        self.n = len(self.mu)
 
     def mean_variance(self, risk_aversion=1.0):
-        n = len(self.mu)
-        w = cp.Variable(n)
+        w = cp.Variable(self.n)
 
-        objective = cp.Maximize(self.mu @ w - risk_aversion * cp.quad_form(w, self.cov))
-        constraints = [cp.sum(w) == 1, w >= 0]  # long-only
-
-        prob = cp.Problem(objective, constraints)
-        prob.solve()
-
-        return pd.Series(w.value, index=self.mu.index)
-
-    def risk_budget(self, risk_fraction=0.20):
-        n = len(self.mu)
-        w = cp.Variable(n)
-
-        portfolio_var = cp.quad_form(w, self.cov)
-        objective = cp.Minimize(portfolio_var)
+        objective = cp.Maximize(
+            cp.matmul(self.mu, w) - risk_aversion * cp.quad_form(w, self.cov)
+        )
 
         constraints = [
             cp.sum(w) == 1,
-            w >= 0,
-            portfolio_var <= risk_fraction
+            w >= 0  # long-only
         ]
 
-        cp.Problem(objective, constraints).solve()
-        return pd.Series(w.value, index=self.mu.index)
+        problem = cp.Problem(objective, constraints)
+        problem.solve(solver=cp.SCS)
+
+        weights = np.array(w.value).flatten()
+
+        return pd.Series(weights, index=self.asset_names)

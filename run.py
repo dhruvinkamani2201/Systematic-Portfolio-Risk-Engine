@@ -38,13 +38,15 @@ def run_pipeline(prices_csv, cfg):
     cov = ce.compute(returns)
     plot_covariance_heatmap(cov)
 
-    # Step 3: Optimizer
-    mu = returns.mean()
-    optimizer = PortfolioOptimizer(cov, mu)
-    
     print("Prices shape:", prices.shape)
     print("Returns shape:", returns.shape)
-    print("Mean returns:", mu)
+    print("Columns:", returns.columns)
+    print("Mean returns:", returns.mean())
+
+
+    # Step 3: Optimizer
+    mu = returns.mean()
+    optimizer = PortfolioOptimizer(returns,cov, mu)
 
     weights = optimizer.mean_variance(cfg["optimizer"]["risk_aversion"])
     print("\nOptimized Weights:\n", weights)
