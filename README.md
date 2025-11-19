@@ -9,13 +9,13 @@ python run.py feed
 ```bash
 python run.py risk
 ```
-This step:
-Loads prices
-Computes returns
-Fits PCA factor model
-Applies Ledoit–Wolf shrinkage
-Optimizes portfolio
-Prints allocations
+This step: <br/>
+Loads prices<br/>
+Computes returns<br/>
+Fits PCA factor model<br/>
+Applies Ledoit–Wolf shrinkage<br/>
+Optimizes portfolio<br/>
+Prints allocations<br/>
 
 **3. Run entire workflow (feed → risk pipeline)**
 
