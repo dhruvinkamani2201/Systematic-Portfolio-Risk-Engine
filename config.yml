@@ -1,6 +1,6 @@
 feed:
   symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
-  duration: 120
+  duration: 300
   out: data/prices.csv
 
 optimizer:
